@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  dashboard:
+    build: .
+    image: devops-dashboard:latest
+    container_name: devops-dashboard
+    ports:
+      - "5000:5000"
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME:-vishalkonduru}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    container_name: devops-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
