@@ -1,77 +1,70 @@
 import os
-import time
-import hashlib
-import logging
-from flask import Flask, render_template, jsonify, Response
-from fetcher import get_dashboard_data
+from datetime import datetime, timezone
+from flask import Flask, render_template, jsonify
+from flask_caching import Cache
+import config
+from fetcher import get_all_data, fetch_language_stats, fetch_event_summary, get_uptime, get_rate_limit_info
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-)
-logger = logging.getLogger(__name__)
+APP_START = datetime.now(timezone.utc)
 
-app = Flask(__name__, static_folder="static", static_url_path="/static")
+app = Flask(__name__)
+app.secret_key = config.SECRET_KEY
 
-# Build fingerprint — changes every deploy (or use git SHA if available)
-BUILD_ID = os.getenv("RENDER_GIT_COMMIT", str(int(time.time())))[:8]
-
-
-@app.after_request
-def set_cache_headers(response):
-    """Apply correct Cache-Control headers per content type."""
-    ct = response.content_type
-
-    # HTML pages: never cache — always revalidate
-    if "text/html" in ct:
-        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        response.headers["Pragma"]  = "no-cache"
-        response.headers["Expires"] = "0"
-
-    # Versioned static assets: cache 1 year (immutable)
-    elif any(x in ct for x in ("text/css", "javascript", "image/", "font/")):
-        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
-
-    # API / JSON: short cache
-    elif "application/json" in ct:
-        response.headers["Cache-Control"] = "public, max-age=60"
-
-    return response
+# Cache
+if config.REDIS_URL:
+    app.config['CACHE_TYPE'] = 'RedisCache'
+    app.config['CACHE_REDIS_URL'] = config.REDIS_URL
+else:
+    app.config['CACHE_TYPE'] = 'SimpleCache'
+app.config['CACHE_DEFAULT_TIMEOUT'] = config.CACHE_TIMEOUT
+cache = Cache(app)
 
 
-@app.route("/")
+@app.route('/')
+@cache.cached(timeout=config.CACHE_TIMEOUT)
 def index():
-    try:
-        data = get_dashboard_data()
-        return render_template("index.html", build_id=BUILD_ID, **data)
-    except Exception as e:
-        logger.error(f"Dashboard render error: {e}")
-        return render_template(
-            "index.html",
-            build_id=BUILD_ID,
-            profile={}, stats={}, top_languages=[],
-            recent_repos=[], recent_events=[], activity=[],
-            fetched_at="N/A", redis_available=False,
-            github_username="vishalkonduru",
-            error=str(e)
-        )
+    data = get_all_data()
+    return render_template('index.html', data=data, version=config.APP_VERSION)
 
 
-@app.route("/health")
-def health():
-    return jsonify({"status": "ok", "service": "devops-dashboard", "build": BUILD_ID}), 200
-
-
-@app.route("/api/data")
+@app.route('/api/data')
+@cache.cached(timeout=config.CACHE_TIMEOUT)
 def api_data():
-    try:
-        data = get_dashboard_data()
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify(get_all_data())
 
 
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5000))
-    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
-    app.run(host="0.0.0.0", port=port, debug=debug)
+@app.route('/api/stats')
+def api_stats():
+    """Always-fresh stats: uptime, languages, events, rate limit."""
+    delta = datetime.now(timezone.utc) - APP_START
+    return jsonify({
+        'uptime_seconds': int(delta.total_seconds()),
+        'uptime_human': get_uptime(),
+        'language_stats': fetch_language_stats(),
+        'event_summary': fetch_event_summary(),
+        'rate_limit': get_rate_limit_info(),
+        'cache_type': app.config.get('CACHE_TYPE'),
+        'version': config.APP_VERSION,
+        'timestamp': datetime.utcnow().isoformat() + 'Z',
+    })
+
+
+@app.route('/health')
+def health():
+    delta = datetime.now(timezone.utc) - APP_START
+    return jsonify({
+        'status': 'ok',
+        'service': config.APP_NAME,
+        'version': config.APP_VERSION,
+        'uptime_seconds': int(delta.total_seconds()),
+    }), 200
+
+
+@app.route('/refresh')
+def refresh():
+    cache.clear()
+    return jsonify({'status': 'cache cleared', 'timestamp': datetime.utcnow().isoformat()}), 200
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=config.FLASK_DEBUG)
