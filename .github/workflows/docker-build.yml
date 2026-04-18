@@ -11,6 +11,11 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+# Grant write access to packages at workflow level
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   lint:
     name: Lint & Syntax Check
