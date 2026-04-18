@@ -1,12 +1,14 @@
 import os
-import json
+from datetime import datetime, timezone
 from flask import Flask, render_template, jsonify
 from flask_caching import Cache
-from fetcher import get_all_data
+from fetcher import get_all_data, fetch_language_stats, fetch_event_summary, get_uptime
+
+APP_START = datetime.now(timezone.utc)
 
 app = Flask(__name__)
 
-# Cache config — use Redis if available, fallback to simple in-memory
+# Cache config
 REDIS_URL = os.getenv('REDIS_URL', '')
 if REDIS_URL:
     app.config['CACHE_TYPE'] = 'RedisCache'
@@ -14,7 +16,7 @@ if REDIS_URL:
 else:
     app.config['CACHE_TYPE'] = 'SimpleCache'
 
-app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # 5 min cache
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300
 cache = Cache(app)
 
 
@@ -31,15 +33,35 @@ def api_data():
     return jsonify(get_all_data())
 
 
+@app.route('/api/stats')
+def api_stats():
+    """Lightweight stats endpoint (not cached — always fresh)."""
+    delta = datetime.now(timezone.utc) - APP_START
+    return jsonify({
+        'uptime_seconds': int(delta.total_seconds()),
+        'uptime_human': get_uptime(),
+        'language_stats': fetch_language_stats(),
+        'event_summary': fetch_event_summary(),
+        'cache_type': app.config.get('CACHE_TYPE'),
+        'timestamp': datetime.utcnow().isoformat() + 'Z',
+    })
+
+
 @app.route('/health')
 def health():
-    return jsonify({'status': 'ok', 'service': 'devops-dashboard'}), 200
+    delta = datetime.now(timezone.utc) - APP_START
+    return jsonify({
+        'status': 'ok',
+        'service': 'devops-dashboard',
+        'version': '2.0.0',
+        'uptime_seconds': int(delta.total_seconds()),
+    }), 200
 
 
 @app.route('/refresh')
 def refresh():
     cache.clear()
-    return jsonify({'status': 'cache cleared'}), 200
+    return jsonify({'status': 'cache cleared', 'timestamp': datetime.utcnow().isoformat()}), 200
 
 
 if __name__ == '__main__':
