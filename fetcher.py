@@ -66,10 +66,23 @@ def _is_error(data):
 
 
 def fetch_github_profile():
-    """Fetch GitHub user profile data."""
+    """Fetch GitHub user profile data including aggregate stars and forks."""
     data = _get(f'https://api.github.com/users/{GITHUB_USERNAME}')
     if _is_error(data):
         return {'error': data['_error']}
+
+    # Fetch all repos to compute total stars and forks
+    repos = _get(
+        f'https://api.github.com/users/{GITHUB_USERNAME}/repos',
+        params={'per_page': 100, 'type': 'owner'}
+    )
+    total_stars = 0
+    total_forks = 0
+    if not _is_error(repos):
+        for r in repos:
+            total_stars += r.get('stargazers_count', 0)
+            total_forks += r.get('forks_count', 0)
+
     return {
         'login': data.get('login'),
         'name': data.get('name') or data.get('login'),
@@ -77,6 +90,8 @@ def fetch_github_profile():
         'public_repos': data.get('public_repos', 0),
         'followers': data.get('followers', 0),
         'following': data.get('following', 0),
+        'total_stars': total_stars,
+        'total_forks': total_forks,
         'bio': data.get('bio') or '',
         'html_url': data.get('html_url'),
         'location': data.get('location') or '',
@@ -138,15 +153,18 @@ def fetch_language_stats():
 def fetch_commit_activity():
     """Fetch recent PushEvents and extract individual commits."""
     events = _get(
-        f'https://api.github.com/users/{GITHUB_USERNAME}/events',
-        params={'per_page': 30}
+        f'https://api.github.com/users/{GITHUB_USERNAME}/events/public',
+        params={'per_page': 100}
     )
     if _is_error(events):
+        logger.warning('fetch_commit_activity error: %s', events.get('_error'))
+        return []
+    if not isinstance(events, list):
         return []
     commits = []
     for event in events:
         if event.get('type') == 'PushEvent':
-            for c in event.get('payload', {}).get('commits', [])[:2]:
+            for c in event.get('payload', {}).get('commits', [])[:3]:
                 commits.append({
                     'repo': event['repo']['name'].split('/')[-1],
                     'repo_full': event['repo']['name'],
@@ -154,16 +172,20 @@ def fetch_commit_activity():
                     'sha': c.get('sha', '')[:7],
                     'date': event.get('created_at', ''),
                 })
+        if len(commits) >= 10:
+            break
     return commits[:10]
 
 
 def fetch_event_summary():
     """Summarize last 100 events by type."""
     events = _get(
-        f'https://api.github.com/users/{GITHUB_USERNAME}/events',
+        f'https://api.github.com/users/{GITHUB_USERNAME}/events/public',
         params={'per_page': 100}
     )
     if _is_error(events):
+        return {}
+    if not isinstance(events, list):
         return {}
     type_map = {
         'PushEvent': 'Pushes',

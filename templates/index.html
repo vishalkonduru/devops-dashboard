@@ -5,192 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ data.profile.name or data.profile.login }} | DevOps Dashboard</title>
   <style>
-    /* ── Theme tokens ── */
     :root[data-theme="dark"] {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --surface2: #1c2128;
-      --border: #30363d;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --accent: #58a6ff;
-      --accent2: #79c0ff;
-      --green: #3fb950;
-      --yellow: #d29922;
-      --red: #f85149;
-      --purple: #bc8cff;
-      --orange: #ffa657;
-      --shadow: rgba(0,0,0,0.4);
+      --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+      --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --accent2: #79c0ff;
+      --green: #3fb950; --yellow: #d29922; --red: #f85149; --purple: #bc8cff;
+      --orange: #ffa657; --shadow: rgba(0,0,0,0.4);
     }
     :root[data-theme="light"] {
-      --bg: #f6f8fa;
-      --surface: #ffffff;
-      --surface2: #f0f2f5;
-      --border: #d0d7de;
-      --text: #1f2328;
-      --muted: #636c76;
-      --accent: #0969da;
-      --accent2: #0550ae;
-      --green: #1a7f37;
-      --yellow: #9a6700;
-      --red: #cf222e;
-      --purple: #8250df;
-      --orange: #bc4c00;
-      --shadow: rgba(0,0,0,0.1);
+      --bg: #f6f8fa; --surface: #ffffff; --surface2: #f0f2f5; --border: #d0d7de;
+      --text: #1f2328; --muted: #636c76; --accent: #0969da; --accent2: #0550ae;
+      --green: #1a7f37; --yellow: #9a6700; --red: #cf222e; --purple: #8250df;
+      --orange: #bc4c00; --shadow: rgba(0,0,0,0.1);
     }
-    --radius: 10px;
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      min-height: 100vh;
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px; line-height: 1.6; min-height: 100vh;
       transition: background 0.25s, color 0.25s;
     }
-
-    /* ── Theme toggle ── */
     .theme-toggle {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: border-color 0.15s;
-      white-space: nowrap;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 20px;
+      padding: 4px 10px; cursor: pointer; font-size: 0.82rem; color: var(--text);
+      display: flex; align-items: center; gap: 5px; transition: border-color 0.15s; white-space: nowrap;
     }
     .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── Header ── */
     header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(8px);
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: center; gap: 1.2rem;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px);
     }
-    .avatar {
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      border: 2px solid var(--accent);
-      box-shadow: 0 0 12px rgba(88,166,255,0.25);
-      flex-shrink: 0;
-    }
+    .avatar { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 12px rgba(88,166,255,0.25); flex-shrink: 0; }
     .header-info h1 { font-size: 1.15rem; color: var(--accent); font-weight: 600; }
     .header-info p { color: var(--muted); font-size: 0.82rem; }
     .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
-    .uptime-badge {
-      background: rgba(63,185,80,0.12);
-      border: 1px solid rgba(63,185,80,0.4);
-      color: var(--green);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
+    .uptime-badge { background: rgba(63,185,80,0.12); border: 1px solid rgba(63,185,80,0.4); color: var(--green); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
     .fetched { color: var(--muted); font-size: 0.75rem; }
-    .version-badge {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.72rem;
-    }
-
-    /* ── Layout ── */
+    .version-badge { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; }
     main { max-width: 1180px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
-
-    /* ── Action bar ── */
     .action-bar { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 0.82rem;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-    }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); text-decoration: none; font-size: 0.82rem; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; }
     .btn:hover { background: var(--surface2); border-color: var(--accent); color: var(--accent); }
     .btn-primary { background: rgba(88,166,255,0.1); border-color: var(--accent); color: var(--accent); }
-
-    /* ── Stat cards ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 0.8rem;
-      margin-bottom: 1.5rem;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
-      text-align: center;
-      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s; }
     .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
     .stat-card .num { font-size: 1.8rem; font-weight: 700; color: var(--accent); line-height: 1.2; }
     .stat-card .label { color: var(--muted); font-size: 0.78rem; margin-top: 4px; }
     .stat-card .icon { font-size: 1.3rem; margin-bottom: 4px; }
-
-    /* ── Section ── */
-    .section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.2rem 1.4rem;
-      margin-bottom: 1rem;
-      transition: background 0.25s, border-color 0.25s;
-    }
-    .section-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 1rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .section-title .count {
-      margin-left: auto;
-      background: var(--surface2);
-      color: var(--muted);
-      padding: 1px 8px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      border: 1px solid var(--border);
-    }
-
+    .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; transition: background 0.25s, border-color 0.25s; }
+    .section-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+    .section-title .count { margin-left: auto; background: var(--surface2); color: var(--muted); padding: 1px 8px; border-radius: 12px; font-size: 0.75rem; border: 1px solid var(--border); }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-    /* ── Repo cards ── */
-    .repo-card {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.9rem 1rem;
-      margin-bottom: 0.7rem;
-      transition: border-color 0.2s, background 0.15s;
-    }
+    .repo-card { border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; margin-bottom: 0.7rem; transition: border-color 0.2s, background 0.15s; }
     .repo-card:last-child { margin-bottom: 0; }
     .repo-card:hover { border-color: var(--accent); background: var(--surface2); }
     .repo-card a { color: var(--accent2); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
@@ -199,26 +67,13 @@
     .repo-meta { display: flex; gap: 14px; font-size: 0.77rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
     .lang-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
     .repo-stat { display: flex; align-items: center; gap: 3px; }
-    .topic-pill {
-      background: rgba(88,166,255,0.1);
-      border: 1px solid rgba(88,166,255,0.2);
-      color: var(--accent);
-      padding: 1px 7px; border-radius: 12px; font-size: 0.72rem;
-    }
-
-    /* ── Commit feed ── */
-    .commit-row {
-      padding: 0.7rem 0;
-      border-bottom: 1px solid var(--border);
-      display: grid; grid-template-columns: 1fr auto; gap: 8px;
-    }
+    .topic-pill { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.2); color: var(--accent); padding: 1px 7px; border-radius: 12px; font-size: 0.72rem; }
+    .commit-row { padding: 0.7rem 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr auto; gap: 8px; }
     .commit-row:last-child { border-bottom: none; }
     .commit-repo { color: var(--accent); font-size: 0.76rem; margin-bottom: 2px; font-weight: 600; }
     .commit-msg { color: var(--text); font-size: 0.84rem; }
     .sha { font-family: 'SFMono-Regular', Consolas, monospace; color: var(--green); font-size: 0.78rem; }
     .commit-date { color: var(--muted); font-size: 0.75rem; text-align: right; white-space: nowrap; padding-top: 2px; }
-
-    /* ── Language bar ── */
     .lang-bar { height: 10px; border-radius: 6px; overflow: hidden; display: flex; margin-bottom: 0.9rem; }
     .lang-bar-seg { height: 100%; transition: width 0.4s ease; }
     .lang-legend { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -226,32 +81,14 @@
     .lang-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .lang-item .lang-name { color: var(--text); }
     .lang-item .lang-pct { color: var(--muted); }
-
-    /* ── Event summary ── */
     .event-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.6rem; }
     .event-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem; text-align: center; }
     .event-card .ecount { font-size: 1.5rem; font-weight: 700; color: var(--purple); }
     .event-card .etype { color: var(--muted); font-size: 0.75rem; margin-top: 3px; }
-
-    /* ── Rate Limit bar ── */
-    .rate-limit-bar-track {
-      height: 8px;
-      background: var(--surface2);
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 8px 0 4px;
-    }
-    .rate-limit-bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-    .rl-green  { background: var(--green); }
-    .rl-yellow { background: var(--yellow); }
-    .rl-red    { background: var(--red); }
+    .rate-limit-bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin: 8px 0 4px; }
+    .rate-limit-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .rl-green { background: var(--green); } .rl-yellow { background: var(--yellow); } .rl-red { background: var(--red); }
     .rl-row { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); }
-
-    /* ── CI ── */
     .ci-row { display: flex; align-items: center; gap: 10px; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.84rem; }
     .ci-row:last-child { border-bottom: none; }
     .ci-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -259,26 +96,13 @@
     .ci-link { color: var(--accent); text-decoration: none; }
     .ci-link:hover { text-decoration: underline; }
     .ci-meta { margin-left: auto; color: var(--muted); font-size: 0.76rem; }
-
-    /* ── Profile ── */
     .profile-detail { display: flex; flex-direction: column; gap: 0.5rem; }
     .profile-row { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; color: var(--muted); }
     .profile-row span { color: var(--text); }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center; padding: 1.5rem;
-      color: var(--muted); font-size: 0.78rem;
-      border-top: 1px solid var(--border); margin-top: 2rem;
-    }
+    footer { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 2rem; }
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
-
-    @media (max-width: 800px) {
-      .grid2 { grid-template-columns: 1fr; }
-      header { padding: 0.8rem 1rem; }
-      .header-right { gap: 0.5rem; }
-    }
+    @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } header { padding: 0.8rem 1rem; } .header-right { gap: 0.5rem; } }
   </style>
 </head>
 <body>
@@ -293,7 +117,7 @@
   </div>
   <div class="header-right">
     <span class="version-badge">v{{ version }}</span>
-    <span class="uptime-badge">⬤ Up {{ data.uptime }}</span>
+    <span class="uptime-badge">⚫ Up {{ data.uptime }}</span>
     <span class="fetched">{{ data.fetched_at }}</span>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
       <span id="theme-icon">🌙</span>
@@ -315,9 +139,9 @@
   <!-- Stats Row -->
   <div class="stats-grid">
     <div class="stat-card"><div class="icon">📁</div><div class="num">{{ data.profile.public_repos }}</div><div class="label">Public Repos</div></div>
+    <div class="stat-card"><div class="icon">⭐</div><div class="num">{{ data.profile.total_stars }}</div><div class="label">Total Stars</div></div>
+    <div class="stat-card"><div class="icon">🍴</div><div class="num">{{ data.profile.total_forks }}</div><div class="label">Total Forks</div></div>
     <div class="stat-card"><div class="icon">👥</div><div class="num">{{ data.profile.followers }}</div><div class="label">Followers</div></div>
-    <div class="stat-card"><div class="icon">➡️</div><div class="num">{{ data.profile.following }}</div><div class="label">Following</div></div>
-    <div class="stat-card"><div class="icon">💾</div><div class="num">{{ data.repos | length }}</div><div class="label">Shown Repos</div></div>
     <div class="stat-card"><div class="icon">📝</div><div class="num">{{ data.commits | length }}</div><div class="label">Recent Commits</div></div>
     <div class="stat-card"><div class="icon">🌐</div><div class="num">{{ data.language_stats | length }}</div><div class="label">Languages</div></div>
   </div>
@@ -359,7 +183,7 @@
 
     <!-- Repos -->
     <div class="section">
-      <div class="section-title">📁 Recent Repositories <span class="count">{{ data.repos | length }}</span></div>
+      <div class="section-title">📁 Recently Updated Repos <span class="count">{{ data.repos | length }}</span></div>
       {% for repo in data.repos %}
       <div class="repo-card">
         <a href="{{ repo.url }}" target="_blank">{{ repo.name }}</a>
@@ -368,7 +192,7 @@
           <span class="repo-stat"><span class="lang-dot" style="background:{{ repo.lang_color }};"></span>{{ repo.language }}</span>
           <span class="repo-stat">⭐ {{ repo.stars }}</span>
           <span class="repo-stat">🍴 {{ repo.forks }}</span>
-          {% if repo.open_issues > 0 %}<span class="repo-stat" style="color:var(--yellow)">⚠ {{ repo.open_issues }}</span>{% endif %}
+          {% if repo.open_issues > 0 %}<span class="repo-stat" style="color:var(--yellow)">&#9888; {{ repo.open_issues }}</span>{% endif %}
         </div>
         {% if repo.topics %}
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">
@@ -416,7 +240,7 @@
           <div class="commit-date">{{ commit.date[:10] if commit.date else '' }}</div>
         </div>
         {% else %}
-        <p style="color:var(--muted)">No recent commits.</p>
+        <p style="color:var(--muted)">No recent commits found.</p>
         {% endfor %}
       </div>
 
@@ -444,31 +268,22 @@
 </footer>
 
 <script>
-  // ── Theme toggle ──
   const root = document.documentElement;
   const STORAGE_KEY = 'dd-theme';
-
   function applyTheme(theme) {
     root.setAttribute('data-theme', theme);
     document.getElementById('theme-icon').textContent = theme === 'dark' ? '\u{1F319}' : '\u2600\uFE0F';
     document.getElementById('theme-label').textContent = theme === 'dark' ? 'Light' : 'Dark';
     try { localStorage.setItem(STORAGE_KEY, theme); } catch(_) {}
   }
-
   function toggleTheme() {
     const current = root.getAttribute('data-theme') || 'dark';
     applyTheme(current === 'dark' ? 'light' : 'dark');
   }
-
-  // Restore saved preference on load
   (function() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) applyTheme(saved);
-    } catch(_) {}
+    try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) applyTheme(saved); } catch(_) {}
   })();
 
-  // ── Rate limit widget (live fetch from /api/stats) ──
   async function loadRateLimit() {
     const el = document.getElementById('rl-content');
     try {
@@ -491,13 +306,12 @@
           <span>${used} used &nbsp;·&nbsp; resets ${resetTime}</span>
         </div>
         <div style="margin-top:6px;font-size:0.76rem;color:var(--muted);">
-          ${remaining < 10 ? '<span style="color:var(--red)">⚠️ Rate limit critical — add a GITHUB_TOKEN to increase to 5000/hr</span>' : (limit <= 60 ? 'Unauthenticated (60 req/hr). Add GITHUB_TOKEN for 5000/hr.' : 'Authenticated ✔️')}
+          ${remaining < 10 ? '<span style="color:var(--red)">⚠️ Rate limit critical — add a GITHUB_TOKEN</span>' : (limit <= 60 ? 'Unauthenticated (60 req/hr). Add GITHUB_TOKEN for 5000/hr.' : 'Authenticated ✔️')}
         </div>`;
     } catch(e) {
       el.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;">Rate limit unavailable</p>';
     }
   }
-
   loadRateLimit();
 </script>
 
