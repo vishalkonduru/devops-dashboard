@@ -78,7 +78,6 @@ devops-dashboard/
 
 ## 🔗 Links
 
-- **Live Dashboard:** http://localhost:5000
 - **GHCR Image:** `ghcr.io/vishalkonduru/devops-dashboard:latest`
 - **GitHub Actions:** https://github.com/vishalkonduru/devops-dashboard/actions
-- **Render Deployment:** https://devops-dashboard-4iu4.onrender.com
+- **Live Dashboard:** https://devops-dashboard-4iu4.onrender.com
