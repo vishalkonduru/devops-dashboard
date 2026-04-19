@@ -128,11 +128,9 @@
 
 <main>
 
+  <!-- Only public-facing links -->
   <div class="action-bar">
-    <a class="btn btn-primary" href="{{ data.profile.html_url }}" target="_blank">🔗 GitHub Profile</a>
-    <a class="btn" href="/api/data" target="_blank">📦 JSON API</a>
-    <a class="btn" href="/api/stats" target="_blank">📈 Stats API</a>
-    <a class="btn" href="/refresh">🔄 Refresh Cache</a>
+    <a class="btn btn-primary" href="{{ data.profile.html_url }}" target="_blank" rel="noopener">🔗 GitHub Profile</a>
     <a class="btn" href="/health" target="_blank">💚 Health</a>
   </div>
 
@@ -182,7 +180,7 @@
       <div class="section-title">📁 Recently Updated Repos <span class="count">{{ data.repos | length }}</span></div>
       {% for repo in data.repos %}
       <div class="repo-card">
-        <a href="{{ repo.url }}" target="_blank">{{ repo.name }}</a>
+        <a href="{{ repo.url }}" target="_blank" rel="noopener">{{ repo.name }}</a>
         {% if repo.description %}<p class="repo-desc">{{ repo.description }}</p>{% endif %}
         <div class="repo-meta">
           <span class="repo-stat"><span class="lang-dot" style="background:{{ repo.lang_color }};"></span>{{ repo.language }}</span>
@@ -212,10 +210,10 @@
 
       <div class="section">
         <div class="section-title">🔄 CI/CD Pipeline</div>
-        <div class="ci-row"><div class="ci-dot green"></div><span>Docker Build &amp; Push</span><a class="ci-link" href="https://github.com/vishalkonduru/devops-dashboard/actions" target="_blank">View →</a><span class="ci-meta">push to main</span></div>
+        <div class="ci-row"><div class="ci-dot green"></div><span>Docker Build &amp; Push</span><a class="ci-link" href="https://github.com/vishalkonduru/devops-dashboard/actions" target="_blank" rel="noopener">View →</a><span class="ci-meta">push to main</span></div>
         <div class="ci-row"><div class="ci-dot green"></div><span>Health + Stats Tests</span><span class="ci-meta">/health &amp; /api/stats</span></div>
         <div class="ci-row"><div class="ci-dot green"></div><span>Trivy Security Scan</span><span class="ci-meta">HIGH/CRITICAL CVEs</span></div>
-        <div class="ci-row"><div class="ci-dot green"></div><span>GHCR Publish</span><a class="ci-link" href="https://github.com/vishalkonduru?tab=packages" target="_blank">Packages →</a><span class="ci-meta">:latest + :sha</span></div>
+        <div class="ci-row"><div class="ci-dot green"></div><span>GHCR Publish</span><a class="ci-link" href="https://github.com/vishalkonduru?tab=packages" target="_blank" rel="noopener">Packages →</a><span class="ci-meta">:latest + :sha</span></div>
         <div style="margin-top:0.8rem;padding:0.6rem;background:var(--surface2);border-radius:6px;font-size:0.78rem;">
           <code style="color:var(--green);">ghcr.io/vishalkonduru/devops-dashboard:latest</code>
         </div>
@@ -245,9 +243,9 @@
     <div class="profile-detail">
       {% if data.profile.location %}<div class="profile-row">📍 <span>{{ data.profile.location }}</span></div>{% endif %}
       {% if data.profile.company %}<div class="profile-row">🏢 <span>{{ data.profile.company }}</span></div>{% endif %}
-      {% if data.profile.blog %}<div class="profile-row">🌐 <a href="{{ data.profile.blog }}" target="_blank" style="color:var(--accent);">{{ data.profile.blog }}</a></div>{% endif %}
+      {% if data.profile.blog %}<div class="profile-row">🌐 <a href="{{ data.profile.blog }}" target="_blank" rel="noopener" style="color:var(--accent);">{{ data.profile.blog }}</a></div>{% endif %}
       <div class="profile-row">📅 Member since <span>{{ data.profile.created_at[:10] if data.profile.created_at else 'N/A' }}</span></div>
-      <div class="profile-row">🔗 <a href="{{ data.profile.html_url }}" target="_blank" style="color:var(--accent);">{{ data.profile.html_url }}</a></div>
+      <div class="profile-row">🔗 <a href="{{ data.profile.html_url }}" target="_blank" rel="noopener" style="color:var(--accent);">{{ data.profile.html_url }}</a></div>
     </div>
   </div>
 
@@ -255,8 +253,8 @@
 
 <footer>
   DevOps Dashboard v{{ version }} &mdash; Flask + Redis + GitHub Actions &nbsp;|
-  <a href="https://github.com/vishalkonduru/devops-dashboard" target="_blank">Source</a>
-  &nbsp;|&nbsp; <a href="https://github.com/vishalkonduru" target="_blank">@vishalkonduru</a>
+  <a href="https://github.com/vishalkonduru/devops-dashboard" target="_blank" rel="noopener">Source</a>
+  &nbsp;|&nbsp; <a href="https://github.com/vishalkonduru" target="_blank" rel="noopener">@vishalkonduru</a>
 </footer>
 
 <script>
