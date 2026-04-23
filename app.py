@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from flask import Flask, render_template, jsonify
 from flask_caching import Cache
 import config
-from fetcher import get_all_data, fetch_language_stats, fetch_event_summary, get_uptime, get_rate_limit_info
+from fetcher import get_all_data, fetch_language_stats, fetch_event_summary, get_uptime
 
 APP_START = datetime.now(timezone.utc)
 
@@ -35,14 +35,13 @@ def api_data():
 
 @app.route('/api/stats')
 def api_stats():
-    """Always-fresh stats: uptime, languages, events, rate limit."""
+    """Always-fresh stats: uptime, languages, events."""
     delta = datetime.now(timezone.utc) - APP_START
     return jsonify({
         'uptime_seconds': int(delta.total_seconds()),
         'uptime_human': get_uptime(),
         'language_stats': fetch_language_stats(),
         'event_summary': fetch_event_summary(),
-        'rate_limit': get_rate_limit_info(),
         'cache_type': app.config.get('CACHE_TYPE'),
         'version': config.APP_VERSION,
         'timestamp': datetime.utcnow().isoformat() + 'Z',
