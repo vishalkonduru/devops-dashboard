@@ -1,10 +1,10 @@
-# 🚀 DevOps Dashboard
+🚀 My GitHub Dashboard
 
 > A production-ready personal DevOps dashboard built with **Flask**, **Redis**, and the **GitHub API** — containerized with Docker and deployed via GitHub Actions CI/CD.
 
 ![Docker Build](https://github.com/vishalkonduru/devops-dashboard/actions/workflows/docker-build.yml/badge.svg)
 
-## ✨ Features
+ ✨ Features
 
 - 📊 **Live GitHub Stats** — repos, followers, recent commits
 - ⚡ **Redis Caching** — 5-minute TTL to avoid API rate limits
@@ -13,7 +13,7 @@
 - 🏥 **Health Checks** — `/health` endpoint for container orchestration
 - 📦 **JSON API** — `/api/data` for programmatic access
 
-## 🏃 Quick Start
+ 🏃 Quick Start
 
 ```bash
 # Clone
@@ -27,7 +27,7 @@ docker-compose up -d
 open http://localhost:5000
 ```
 
-## 🐳 Docker Commands
+ 🐳 Docker Commands
 
 ```bash
 # Build locally
@@ -42,7 +42,7 @@ docker run -d -p 5000:5000 \
 docker pull ghcr.io/vishalkonduru/devops-dashboard:latest
 ```
 
-## 🔧 Environment Variables
+ 🔧 Environment Variables
 
 | Variable | Default | Description |
 |---|---|---|
@@ -50,7 +50,7 @@ docker pull ghcr.io/vishalkonduru/devops-dashboard:latest
 | `GITHUB_TOKEN` | _(optional)_ | GitHub PAT for higher API rate limits |
 | `REDIS_URL` | _(auto via compose)_ | Redis connection URL |
 
-## 🗂️ Project Structure
+ 🗂️ Project Structure
 
 ```
 devops-dashboard/
@@ -67,7 +67,7 @@ devops-dashboard/
     └── docker-build.yml    # CI/CD pipeline
 ```
 
-## 📡 API Endpoints
+ 📡 API Endpoints
 
 | Endpoint | Description |
 |---|---|
@@ -76,7 +76,7 @@ devops-dashboard/
 | `GET /api/data` | Raw GitHub data (JSON) |
 | `GET /refresh` | Clear cache |
 
-## 🔗 Links
+ 🔗 Links
 
 - **GHCR Image:** `ghcr.io/vishalkonduru/devops-dashboard:latest`
 - **GitHub Actions:** https://github.com/vishalkonduru/devops-dashboard/actions
