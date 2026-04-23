@@ -42,7 +42,6 @@
     .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
     .uptime-badge { background: rgba(63,185,80,0.12); border: 1px solid rgba(63,185,80,0.4); color: var(--green); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
     .fetched { color: var(--muted); font-size: 0.75rem; }
-    .version-badge { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; }
     main { max-width: 1180px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
     .action-bar { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); text-decoration: none; font-size: 0.82rem; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; }
@@ -105,7 +104,6 @@
     <p>{{ data.profile.bio or 'Personal DevOps Dashboard' }}</p>
   </div>
   <div class="header-right">
-    <span class="version-badge">v{{ version }}</span>
     <span class="uptime-badge">⚫ Up {{ data.uptime }}</span>
     <span class="fetched">{{ data.fetched_at }}</span>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
@@ -218,7 +216,7 @@
 </main>
 
 <footer>
-  DevOps Dashboard v{{ version }} &mdash; Flask + Redis
+  DevOps Dashboard &mdash; Flask + Redis
   &nbsp;|&nbsp; <a href="https://github.com/vishalkonduru/devops-dashboard" target="_blank" rel="noopener">Source</a>
   &nbsp;|&nbsp; <a href="https://github.com/vishalkonduru" target="_blank" rel="noopener">@vishalkonduru</a>
 </footer>
