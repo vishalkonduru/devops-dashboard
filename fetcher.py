@@ -1,12 +1,14 @@
 import os
 import logging
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from collections import Counter
 
 logger = logging.getLogger(__name__)
 
 GITHUB_USERNAME = os.getenv('GITHUB_USERNAME', 'vishalkonduru')
+
+IST = timezone(timedelta(hours=5, minutes=30))
 
 LANG_COLORS = {
     'Python': '#3572A5', 'JavaScript': '#f1e05a', 'TypeScript': '#2b7489',
@@ -252,6 +254,7 @@ def get_uptime():
 
 
 def get_all_data():
+    now_ist = datetime.now(IST)
     return {
         'profile':        fetch_github_profile(),
         'repos':          fetch_recent_repos(),
@@ -259,5 +262,5 @@ def get_all_data():
         'language_stats': fetch_language_stats(),
         'event_summary':  fetch_event_summary(),
         'uptime':         get_uptime(),
-        'fetched_at':     datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC'),
+        'fetched_at':     now_ist.strftime('%d %b %Y, %I:%M %p IST'),
     }
