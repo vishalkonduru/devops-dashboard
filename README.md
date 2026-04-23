@@ -2,7 +2,7 @@
 
 > A production-ready personal DevOps dashboard built with **Flask**, **Redis**, and the **GitHub API** — containerized with Docker and deployed via GitHub Actions CI/CD.
 
-![Docker Build](https://github.com/vishalkonduru/devops-dashboard/actions/workflows/docker-build.yml/badge.svg)
+
 
  ✨ Features
 
