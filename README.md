@@ -38,16 +38,13 @@ docker run -d -p 5000:5000 \
   -e GITHUB_USERNAME=vishalkonduru \
   devops-dashboard:latest
 
-# Pull from GHCR
-docker pull ghcr.io/vishalkonduru/devops-dashboard:latest
-```
+
 
  🔧 Environment Variables
 
 | Variable | Default | Description |
 |---|---|---|
 | `GITHUB_USERNAME` | `vishalkonduru` | GitHub username to display |
-| `GITHUB_TOKEN` | _(optional)_ | GitHub PAT for higher API rate limits |
 | `REDIS_URL` | _(auto via compose)_ | Redis connection URL |
 
  🗂️ Project Structure
@@ -77,7 +74,4 @@ devops-dashboard/
 | `GET /refresh` | Clear cache |
 
  🔗 Links
-
-- **GHCR Image:** `ghcr.io/vishalkonduru/devops-dashboard:latest`
-- **GitHub Actions:** https://github.com/vishalkonduru/devops-dashboard/actions
 - **Live Dashboard:** https://devops-dashboard-4iu4.onrender.com
