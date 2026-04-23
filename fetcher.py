@@ -241,19 +241,6 @@ def fetch_event_summary():
     return dict(counts.most_common())
 
 
-def get_rate_limit_info():
-    data = _get('https://api.github.com/rate_limit')
-    if _is_error(data):
-        return {}
-    core = data.get('resources', {}).get('core', {})
-    return {
-        'limit':     core.get('limit', 0),
-        'remaining': core.get('remaining', 0),
-        'reset':     core.get('reset', 0),
-        'used':      core.get('used', 0),
-    }
-
-
 START_TIME = datetime.now(timezone.utc)
 
 
