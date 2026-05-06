@@ -169,12 +169,12 @@
   {% endif %}
 
   <div class="stats-grid">
-    <div class="stat-card"><div class="icon">📁</div><div class="num">{{ data.profile.public_repos }}</div><div class="label">Public Repos</div></div>
-    <div class="stat-card"><div class="icon">⭐</div><div class="num">{{ data.profile.total_stars }}</div><div class="label">Total Stars</div></div>
-    <div class="stat-card"><div class="icon">🍴</div><div class="num">{{ data.profile.total_forks }}</div><div class="label">Total Forks</div></div>
-    <div class="stat-card"><div class="icon">👥</div><div class="num">{{ data.profile.followers }}</div><div class="label">Followers</div></div>
-    <div class="stat-card"><div class="icon">📝</div><div class="num">{{ data.commits | length }}</div><div class="label">Recent Commits</div></div>
-    <div class="stat-card"><div class="icon">🌐</div><div class="num">{{ data.language_stats | length }}</div><div class="label">Languages</div></div>
+    <div class="stat-card"><div class="icon">📁</div><div class="num" data-target="{{ data.profile.public_repos }}">0</div><div class="label">Public Repos</div></div>
+    <div class="stat-card"><div class="icon">⭐</div><div class="num" data-target="{{ data.profile.total_stars }}">0</div><div class="label">Total Stars</div></div>
+    <div class="stat-card"><div class="icon">🍴</div><div class="num" data-target="{{ data.profile.total_forks }}">0</div><div class="label">Total Forks</div></div>
+    <div class="stat-card"><div class="icon">👥</div><div class="num" data-target="{{ data.profile.followers }}">0</div><div class="label">Followers</div></div>
+    <div class="stat-card"><div class="icon">📝</div><div class="num" data-target="{{ data.commits | length }}">0</div><div class="label">Recent Commits</div></div>
+    <div class="stat-card"><div class="icon">🌐</div><div class="num" data-target="{{ data.language_stats | length }}">0</div><div class="label">Languages</div></div>
   </div>
 
   {% if data.language_stats %}
@@ -364,6 +364,20 @@
     });
     cards.forEach(card => container.appendChild(card));
   }
+  function animateCounters() {
+    document.querySelectorAll('.stat-card .num[data-target]').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      const duration = 1000;
+      const step = target / (duration / 16);
+      let current = 0;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = Math.floor(current).toLocaleString();
+      }, 16);
+    });
+  }
+  animateCounters();
 </script>
 
 </body>
