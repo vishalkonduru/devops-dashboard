@@ -98,6 +98,12 @@
     footer a:hover { text-decoration: underline; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @media print {
+      body { background: white; color: black; }
+      header, footer, .action-bar, .theme-toggle, #scrollTop, #search-bar, button { display: none !important; }
+      .section { break-inside: avoid; border: 1px solid #ccc; }
+      .stat-card { border: 1px solid #ccc; }
+    }
     @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } header { padding: 0.8rem 1rem; } .header-right { gap: 0.5rem; } }
   </style>
 </head>
