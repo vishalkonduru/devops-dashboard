@@ -210,7 +210,14 @@
   <div class="grid2">
 
     <div class="section">
-      <div class="section-title">📁 Recently Updated Repos <span class="count">{{ data.repos | length }}</span></div>
+      <div class="section-title">📁 Recently Updated Repos <span class="count">{{ data.repos | length }}</span>
+      <select id="repo-sort" style="margin-left:10px; background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 6px; font-size:0.75rem;" onchange="sortRepos(this.value)">
+        <option value="updated">Recently Updated</option>
+        <option value="stars">Most Stars</option>
+        <option value="forks">Most Forks</option>
+        <option value="name">Name A-Z</option>
+      </select>
+    </div>
       {% for repo in data.repos %}
       <div class="repo-card">
         <a href="{{ repo.url }}" target="_blank" rel="noopener">{{ repo.name }}</a>
@@ -307,6 +314,17 @@
       a.href = url; a.download = 'dashboard-data.json';
       a.click(); URL.revokeObjectURL(url);
     });
+  }
+  function sortRepos(criteria) {
+    const container = document.querySelector('.section .repo-card').parentElement;
+    const cards = Array.from(container.querySelectorAll('.repo-card'));
+    cards.sort((a, b) => {
+      if (criteria === 'stars') return parseInt(b.querySelector('.repo-stat:nth-child(2)').textContent.replace('⭐ ', '')) - parseInt(a.querySelector('.repo-stat:nth-child(2)').textContent.replace('⭐ ', ''));
+      if (criteria === 'forks') return parseInt(b.querySelector('.repo-stat:nth-child(3)').textContent.replace('🍴 ', '')) - parseInt(a.querySelector('.repo-stat:nth-child(3)').textContent.replace('🍴 ', ''));
+      if (criteria === 'name') return a.querySelector('a').textContent.localeCompare(b.querySelector('a').textContent);
+      return 0;
+    });
+    cards.forEach(card => container.appendChild(card));
   }
 </script>
 
