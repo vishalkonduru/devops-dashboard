@@ -414,6 +414,19 @@
     const dateStr = el.dataset.date;
     if (dateStr) el.textContent = timeAgo(dateStr);
   });
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      toggleSearch();
+      document.getElementById('repo-search')?.focus();
+    }
+    if (e.key === 't' && document.activeElement.tagName !== 'INPUT') {
+      toggleTheme();
+    }
+    if (e.key === 'Escape') {
+      document.getElementById('search-bar').style.display = 'none';
+    }
+  });
 </script>
 
 </body>
