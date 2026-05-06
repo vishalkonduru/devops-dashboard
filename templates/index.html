@@ -64,7 +64,8 @@
     .section-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
     .section-title .count { margin-left: auto; background: var(--surface2); color: var(--muted); padding: 1px 8px; border-radius: 12px; font-size: 0.75rem; border: 1px solid var(--border); }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .repo-card { border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; margin-bottom: 0.7rem; transition: border-color 0.2s, background 0.15s; }
+    .repo-card { border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; margin-bottom: 0.7rem; transition: border-color 0.2s, background 0.15s; opacity:0; animation: fadeInUp 0.4s ease forwards; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     .repo-card:last-child { margin-bottom: 0; }
     .repo-card:hover { border-color: var(--accent); background: var(--surface2); }
     .repo-card a { color: var(--accent2); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
@@ -460,6 +461,9 @@
     document.body.appendChild(toast);
     setTimeout(() => { toast.style.animation = 'fadeOut 0.3s'; setTimeout(() => toast.remove(), 300); }, 2000);
   }
+  document.querySelectorAll('.repo-card').forEach((card, i) => {
+    card.style.animationDelay = `${i * 0.1}s`;
+  });
   function animateCounters() {
     document.querySelectorAll('.stat-card .num[data-target]').forEach(el => {
       const target = parseInt(el.dataset.target);
