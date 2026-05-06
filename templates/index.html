@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ data.profile.name or data.profile.login }} | DevOps Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root[data-theme="dark"] {
       --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
@@ -195,6 +196,43 @@
     </div>
   </div>
   {% endif %}
+
+  <div class="section">
+    <div class="section-title">⭐ Repository Stars Distribution</div>
+    <canvas id="starsChart" style="max-height:300px;"></canvas>
+  </div>
+  <script>
+    const repos = {{ data.repos | tojson }};
+    if (repos.length > 0) {
+      const ctx = document.getElementById('starsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: repos.map(r => r.name),
+          datasets: [{
+            label: 'Stars',
+            data: repos.map(r => r.stars),
+            backgroundColor: 'rgba(88, 166, 255, 0.6)',
+            borderColor: 'rgba(88, 166, 255, 1)',
+            borderWidth: 1,
+            borderRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { backgroundColor: 'var(--surface2)', titleColor: 'var(--text)', bodyColor: 'var(--text)' }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'var(--border)' }, ticks: { color: 'var(--muted)' } },
+            x: { grid: { display: false }, ticks: { color: 'var(--muted)', maxRotation: 45 } }
+          }
+        }
+      });
+    }
+  </script>
 
   {% if data.event_summary %}
   <div class="section">
