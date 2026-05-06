@@ -262,6 +262,12 @@
         <option value="forks">Most Forks</option>
         <option value="name">Name A-Z</option>
       </select>
+      <select id="lang-filter" style="margin-left:5px; background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 6px; font-size:0.75rem;" onchange="filterByLang(this.value)">
+        <option value="all">All Languages</option>
+        {% for lang in data.language_stats %}
+        <option value="{{ lang.name }}">{{ lang.name }}</option>
+        {% endfor %}
+      </select>
     </div>
       {% for repo in data.repos %}
       <div class="repo-card">
@@ -378,6 +384,15 @@
       return 0;
     });
     cards.forEach(card => container.appendChild(card));
+  }
+  function filterByLang(lang) {
+    const cards = document.querySelectorAll('.repo-card');
+    cards.forEach(card => {
+      if (lang === 'all') { card.style.display = 'block'; return; }
+      const langSpan = card.querySelector('.repo-stat span') || card.querySelector('.lang-dot');
+      const repoLang = card.querySelector('.repo-stat').textContent.trim();
+      card.style.display = repoLang.includes(lang) ? 'block' : 'none';
+    });
   }
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => showToast('URL copied to clipboard!'));
