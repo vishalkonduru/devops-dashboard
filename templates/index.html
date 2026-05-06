@@ -349,7 +349,13 @@
     applyTheme(current === 'dark' ? 'light' : 'dark');
   }
   (function() {
-    try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) applyTheme(saved); } catch(_) {}
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) { applyTheme(saved); return; }
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        applyTheme('light');
+      }
+    } catch(_) {}
   })();
 
   function toggleSearch() {
