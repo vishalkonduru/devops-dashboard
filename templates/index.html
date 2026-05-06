@@ -509,6 +509,9 @@
     if (e.key === 'Escape') {
       document.getElementById('search-bar').style.display = 'none';
     }
+    if ((e.key === 'b' || e.key === 'Home') && document.activeElement.tagName !== 'INPUT') {
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
   });
   (function() {
     let seconds = 300;
