@@ -120,6 +120,8 @@
   <div class="header-right">
     <span class="uptime-badge">⚫ Up {{ data.uptime }}</span>
     <span class="fetched">{{ data.fetched_at }}</span>
+    <a href="https://twitter.com/intent/tweet?text=Check out my DevOps Dashboard!&url={{ request.url }}" target="_blank" rel="noopener" class="btn" style="padding:4px 8px;font-size:0.75rem;" title="Share on Twitter">𝕏</a>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url }}" target="_blank" rel="noopener" class="btn" style="padding:4px 8px;font-size:0.75rem;" title="Share on LinkedIn">in</a>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
       <span id="theme-icon">🌙</span>
       <span id="theme-label">Light</span>

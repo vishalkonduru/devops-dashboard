@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timezone
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_caching import Cache
 import config
 from fetcher import get_all_data, fetch_language_stats, fetch_event_summary, get_uptime
@@ -24,7 +24,7 @@ cache = Cache(app)
 @cache.cached(timeout=config.CACHE_TIMEOUT)
 def index():
     data = get_all_data()
-    return render_template('index.html', data=data, version=config.APP_VERSION)
+    return render_template('index.html', data=data, version=config.APP_VERSION, request=request)
 
 
 @app.route('/api/data')
