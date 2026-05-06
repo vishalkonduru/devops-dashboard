@@ -91,6 +91,8 @@
     footer { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 2rem; }
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
     @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } header { padding: 0.8rem 1rem; } .header-right { gap: 0.5rem; } }
   </style>
 </head>
@@ -259,6 +261,7 @@
       {% for repo in data.repos %}
       <div class="repo-card">
         <a href="{{ repo.url }}" target="_blank" rel="noopener">{{ repo.name }}</a>
+        <button onclick="copyToClipboard('{{ repo.url }}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.75rem;margin-left:4px;" title="Copy URL">📋</button>
         {% if repo.description %}<p class="repo-desc">{{ repo.description }}</p>{% endif %}
         <div class="repo-meta">
           <span class="repo-stat"><span class="lang-dot" style="background:{{ repo.lang_color }};"></span>{{ repo.language }}</span>
@@ -363,6 +366,16 @@
       return 0;
     });
     cards.forEach(card => container.appendChild(card));
+  }
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => showToast('URL copied to clipboard!'));
+  }
+  function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:10px 16px;border-radius:6px;font-size:0.82rem;z-index:9999;animation:fadeIn 0.3s;';
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.animation = 'fadeOut 0.3s'; setTimeout(() => toast.remove(), 300); }, 2000);
   }
   function animateCounters() {
     document.querySelectorAll('.stat-card .num[data-target]').forEach(el => {
