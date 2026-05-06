@@ -117,7 +117,55 @@
 
   <div class="action-bar">
     <a class="btn btn-primary" href="{{ data.profile.html_url }}" target="_blank" rel="noopener">🔗 GitHub Profile</a>
+    <button class="btn" onclick="exportData('json')">📥 Export JSON</button>
+    <button class="btn" onclick="toggleSearch()">🔍 Search Repos</button>
   </div>
+
+  <div id="search-bar" style="display:none; margin-bottom:1rem;">
+    <input type="text" id="repo-search" placeholder="Search repositories..." style="width:100%; padding:8px 12px; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:0.9rem;" oninput="filterRepos(this.value)">
+  </div>
+
+  {% if data.contributions %}
+  <div class="section">
+    <div class="section-title">📊 Contribution Activity (Last 365 Days)</div>
+    <div id="contribution-graph" style="display:grid; grid-template-columns:repeat(52, 1fr); gap:2px; margin-top:0.5rem;"></div>
+    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.75rem; color:var(--muted);">
+      <span>Less</span>
+      <div style="display:flex; gap:3px;">
+        <div style="width:12px; height:12px; background:var(--surface2); border:1px solid var(--border); border-radius:2px;"></div>
+        <div style="width:12px; height:12px; background:#0e4429; border-radius:2px;"></div>
+        <div style="width:12px; height:12px; background:#006d32; border-radius:2px;"></div>
+        <div style="width:12px; height:12px; background:#26a641; border-radius:2px;"></div>
+        <div style="width:12px; height:12px; background:#39d353; border-radius:2px;"></div>
+      </div>
+      <span>More</span>
+    </div>
+  </div>
+  <script>
+    const contributions = {{ data.contributions | tojson }};
+    function renderContributionGraph() {
+      const container = document.getElementById('contribution-graph');
+      const today = new Date();
+      const days = [];
+      for (let i = 364; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        days.push(d.toISOString().split('T')[0]);
+      }
+      const maxCount = Math.max(...Object.values(contributions), 1);
+      days.forEach(date => {
+        const count = contributions[date] || 0;
+        const intensity = count === 0 ? 0 : Math.min(4, Math.ceil((count / maxCount) * 4));
+        const colors = ['var(--surface2)', '#0e4429', '#006d32', '#26a641', '#39d353'];
+        const cell = document.createElement('div');
+        cell.style.cssText = `width:12px; height:12px; background:${colors[intensity]}; border-radius:2px; cursor:pointer;`;
+        cell.title = `${date}: ${count} contribution${count !== 1 ? 's' : ''}`;
+        container.appendChild(cell);
+      });
+    }
+    renderContributionGraph();
+  </script>
+  {% endif %}
 
   <div class="stats-grid">
     <div class="stat-card"><div class="icon">📁</div><div class="num">{{ data.profile.public_repos }}</div><div class="label">Public Repos</div></div>
@@ -237,6 +285,29 @@
   (function() {
     try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) applyTheme(saved); } catch(_) {}
   })();
+
+  function toggleSearch() {
+    const bar = document.getElementById('search-bar');
+    bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
+  }
+  function filterRepos(query) {
+    const cards = document.querySelectorAll('.repo-card');
+    const lower = query.toLowerCase();
+    cards.forEach(card => {
+      const name = card.querySelector('a').textContent.toLowerCase();
+      const desc = (card.querySelector('.repo-desc') || {}).textContent.toLowerCase();
+      card.style.display = (name.includes(lower) || desc.includes(lower)) ? 'block' : 'none';
+    });
+  }
+  function exportData(format) {
+    fetch('/api/data').then(r => r.json()).then(data => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'dashboard-data.json';
+      a.click(); URL.revokeObjectURL(url);
+    });
+  }
 </script>
 
 </body>

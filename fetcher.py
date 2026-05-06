@@ -253,6 +253,28 @@ def get_uptime():
     return f'{hours}h {minutes}m {seconds}s'
 
 
+def fetch_contribution_data():
+    """Fetch contribution events for the last 365 days."""
+    events = _get(
+        f'https://api.github.com/users/{GITHUB_USERNAME}/events',
+        params={'per_page': 100}
+    )
+    if _is_error(events) or not isinstance(events, list):
+        return {}
+    
+    from datetime import datetime, timedelta
+    today = datetime.now(timezone.utc).date()
+    year_ago = today - timedelta(days=365)
+    
+    contributions = {}
+    for event in events:
+        created = event.get('created_at', '')[:10]
+        if created and created >= str(year_ago):
+            contributions[created] = contributions.get(created, 0) + 1
+    
+    return contributions
+
+
 def get_all_data():
     now_ist = datetime.now(IST)
     return {
@@ -261,6 +283,7 @@ def get_all_data():
         'commits':        fetch_commit_activity(),
         'language_stats': fetch_language_stats(),
         'event_summary':  fetch_event_summary(),
+        'contributions':  fetch_contribution_data(),
         'uptime':         get_uptime(),
         'fetched_at':     now_ist.strftime('%d %b %Y, %I:%M %p IST'),
     }
