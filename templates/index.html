@@ -282,7 +282,7 @@
         </div>
         {% if repo.topics %}
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">
-          {% for t in repo.topics[:4] %}<span class="topic-pill">{{ t }}</span>{% endfor %}
+          {% for t in repo.topics[:4] %}<span class="topic-pill" onclick="filterByTopic('{{ t }}')" style="cursor:pointer;" title="Filter by {{ t }}">{{ t }}</span>{% endfor %}
         </div>
         {% endif %}
       </div>
@@ -393,6 +393,14 @@
       const repoLang = card.querySelector('.repo-stat').textContent.trim();
       card.style.display = repoLang.includes(lang) ? 'block' : 'none';
     });
+  }
+  function filterByTopic(topic) {
+    const cards = document.querySelectorAll('.repo-card');
+    cards.forEach(card => {
+      const topics = Array.from(card.querySelectorAll('.topic-pill')).map(el => el.textContent);
+      card.style.display = topics.includes(topic) ? 'block' : 'none';
+    });
+    showToast(`Filtered by topic: ${topic}`);
   }
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => showToast('URL copied to clipboard!'));
