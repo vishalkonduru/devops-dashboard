@@ -262,6 +262,38 @@
   </div>
   {% endif %}
 
+  <div class="section">
+    <div class="section-title">📈 Commit Activity Timeline</div>
+    <div id="timeline" style="display:flex; gap:3px; align-items:flex-end; height:100px; padding:10px 0;"></div>
+    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--muted); margin-top:4px;">
+      <span>7 days ago</span><span>Today</span>
+    </div>
+  </div>
+  <script>
+    const commitData = {{ data.commits | tojson }};
+    (function() {
+      const timeline = document.getElementById('timeline');
+      const days = [0,0,0,0,0,0,0];
+      const today = new Date();
+      commitData.forEach(c => {
+        if (!c.date) return;
+        const d = new Date(c.date);
+        const diff = Math.floor((today - d) / (1000*60*60*24));
+        if (diff >= 0 && diff < 7) days[6-diff]++;
+      });
+      const max = Math.max(...days, 1);
+      days.forEach((count, i) => {
+        const bar = document.createElement('div');
+        const height = (count / max) * 80 + 5;
+        bar.style.cssText = `flex:1; background:var(--accent); border-radius:3px 3px 0 0; height:${height}px; min-height:5px; opacity:${0.5 + (count/max)*0.5}; cursor:pointer; transition:opacity 0.2s;`;
+        bar.title = `${count} commit${count !== 1 ? 's' : ''} ${i < 6 ? i + ' days ago' : 'today'}`;
+        bar.onmouseover = () => bar.style.opacity = '1';
+        bar.onmouseout = () => bar.style.opacity = 0.5 + (count/max)*0.5;
+        timeline.appendChild(bar);
+      });
+    })();
+  </script>
+
   <div class="grid2">
 
     <div class="section">
