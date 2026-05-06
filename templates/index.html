@@ -42,7 +42,8 @@
       padding: 1rem 2rem; display: flex; align-items: center; gap: 1.2rem;
       position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px);
     }
-    .avatar { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 12px rgba(88,166,255,0.25); flex-shrink: 0; }
+    .avatar { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 12px rgba(88,166,255,0.25); flex-shrink: 0; animation: pulse-border 2s infinite; }
+    @keyframes pulse-border { 0%, 100% { border-color: var(--accent); } 50% { border-color: var(--purple); } }
     .header-info h1 { font-size: 1.15rem; color: var(--accent); font-weight: 600; }
     .header-info p { color: var(--muted); font-size: 0.82rem; }
     .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
